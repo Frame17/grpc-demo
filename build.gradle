@@ -1,0 +1,53 @@
+buildscript {
+    repositories {
+        mavenLocal()
+    }
+    dependencies {
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.13'
+    }
+}
+
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.4.10'
+    id "com.google.protobuf" version "0.8.13"
+    id 'idea'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8'
+
+    implementation "com.google.protobuf:protobuf-java:1.33.1"
+    implementation "io.grpc:grpc-netty:1.33.1"
+    implementation "io.grpc:grpc-netty-shaded:1.33.1"
+    implementation 'io.grpc:grpc-protobuf:1.33.1'
+    implementation 'io.grpc:grpc-stub:1.33.1'
+    implementation "io.grpc:grpc-kotlin-stub:0.2.1"
+
+    compileOnly 'org.apache.tomcat:annotations-api:6.0.53' // necessary for Java 9+
+
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = '1.8'
+}
+
+protobuf {
+    protoc { artifact = "com.google.protobuf:protoc:3.13.0" }
+    plugins {
+        grpc { artifact = "io.grpc:protoc-gen-grpc-java:1.33.1" }
+        grpckt { artifact = "io.grpc:protoc-gen-grpc-kotlin:0.2.1:jdk7@jar" }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.plugins {
+                grpc { }
+                grpckt { }
+            }
+        }
+    }
+}
